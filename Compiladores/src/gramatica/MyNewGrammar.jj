@@ -1,0 +1,576 @@
+ /**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  JDK_VERSION = "1.5";
+
+  static = true;
+}
+
+PARSER_BEGIN(MiniJava)
+package gramatica;
+import syntaxtree.*;
+import visitor.*;
+
+public class MiniJava
+{
+  public static void main(String args []) throws ParseException
+  {
+    System.out.println("Testando");
+  }
+}
+
+PARSER_END(MiniJava)
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+| < "/*" (~[ ])* "*/" >
+| "//" : singlelinecomment
+}
+
+< singlelinecomment >
+SKIP :
+{
+  < [ "\n", "\r" ] > : DEFAULT
+| < ~[ ] >
+}
+
+TOKEN :
+{
+  < CLASS : "class" >
+| < FIM : "$" >
+| < PUBLIC : "public" >
+| < STATIC : "static" >
+| < VOID : "void" >
+| < MAIN : "main" >
+| < STRING : "String" >
+| < EXTENDS : "extends" >
+| < RETURN : "return" >
+| < INT : "int" >
+| < BOOLEAN : "boolean" >
+| < IF : "if" >
+| < ELSE : "else" >
+| < WHILE : "while" >
+| < SOP : "System.out.println" >
+| < LENGTH : "length" >
+| < TRUE : "true" >
+| < FALSE : "false" >
+| < THIS : "this" >
+| < NEW : "new" >
+| < LPAREN : "(" >
+| < RPAREN : ")" >
+| < LCHAVE : "{" >
+| < RCHAVE : "}" >
+| < LCOLCHETE : "[" >
+| < RCOLCHETE : "]" >
+| < PONTO : "." >
+| < VIRGULA : "," >
+| < PVIRGULA : ";" >
+| < EXCL : "!" >
+| < SUM : "+" >
+| < SUB : "-" >
+| < IGUAL : "=" >
+| < MULTI : "*" >
+| < LESSTHAN : "<" >
+| < AND : "&&" >
+| < #DIGIT : [ "0"-"9" ] >
+| < #MIN_LET : [ "a"-"z" ] >
+| < #MAI_LET : [ "A"-"Z" ] >
+| < #LET :
+    < MIN_LET >
+  | < MAI_LET > >
+| < UNDERSCORE : "_" >
+| < ID :
+    < LET >
+    (
+      < LET >
+    | < DIGIT >
+    | < UNDERSCORE >
+    )* >
+| < NUM : (< DIGIT >)+ >
+}
+
+TProgram Program() :
+{
+  TMainClass mc;
+  TClassDeclList cdl;
+}
+{
+  mc = MainClass() cdl = ClassDeclList()
+  {
+    return new TProgram(mc, cdl);
+  }
+}
+
+TMainClass MainClass() :
+{
+  Token id1;
+  Token id2;
+  TStatement st;
+}
+{
+  < CLASS > id1 = < ID > < LCHAVE > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LCOLCHETE > < RCOLCHETE > id2 = < ID > < RPAREN > < LCHAVE > st = Statement() < RCHAVE > < RCHAVE >
+  {
+    return new TMainClass(new TIdentifier(id1.image), new TIdentifier(id2.image), st);
+  }
+}
+
+TClassDeclList ClassDeclList() :
+{
+  TClassDecl cd;
+  TClassDeclList cl;
+}
+{
+  cd = ClassDecl() cl = ClassDeclList()
+  {
+    cl.addElement(cd);
+    return cl;
+  }
+| < FIM >
+  {
+    return new TClassDeclList();
+  }
+}
+
+TClassDecl ClassDecl() :
+{
+  Token id1;
+  TIdentifier cde;
+  TVarDeclList vdl;
+  TMethodDeclList mdl;
+}
+{
+  (< CLASS > id1 = < ID >)
+  (
+    (
+      cde = ClassDeclExtends() < LCHAVE > vdl = VarDeclList() mdl = MethodDeclList() < RCHAVE >
+    )
+    {
+      return new TClassDeclExtends(new TIdentifier(id1.image), cde, vdl, mdl);
+    }
+  |
+    (
+      < LCHAVE > vdl = VarDeclList() mdl = MethodDeclList() < RCHAVE >
+    )
+    {
+      return new TClassDeclSimple(new TIdentifier(id1.image), vdl, mdl);
+    }
+  )
+}
+
+TIdentifier ClassDeclExtends() :
+{
+  Token id1;
+}
+{
+  < EXTENDS > id1 = < ID >
+  {
+    return new TIdentifier(id1.image);
+  }
+}
+
+TVarDeclList VarDeclList() :
+{
+  TVarDecl vd;
+  TVarDeclList vdl;
+}
+{
+  vd = VarDecl() vdl = VarDeclList()
+  {
+    vdl.addElement(vd);
+    return vdl;
+  }
+|
+  {}
+  {
+    return new TVarDeclList();
+  }
+}
+
+TVarDecl VarDecl() :
+{
+  TType ty;
+  Token id1;
+}
+{
+  ty = Type() id1 = < ID > < PVIRGULA >
+  {
+    return new TVarDecl(ty, new TIdentifier(id1.image));
+  }
+}
+
+TType Type() :
+{
+  Token id;
+}
+{
+  (
+    (< INT >)
+    (
+      < LCOLCHETE > < RCOLCHETE >
+      {
+        return new TTypeIntegerArray();
+      }
+    |
+      {}
+      {
+        return new TTypeInteger();
+      }
+    )
+  )
+| < BOOLEAN >
+  {
+    return new TTypeBoolean();
+  }
+| id = < ID >
+  {
+    return new TTypeIdentifier(id.image);
+  }
+}
+
+TMethodDeclList MethodDeclList() :
+{
+  TMethodDecl md;
+  TMethodDeclList mdl;
+}
+{
+  md = MethodDecl() mdl = MethodDeclList()
+  {
+    mdl.addElement(md);
+    return mdl;
+  }
+|
+  {}
+  {
+    return new TMethodDeclList();
+  }
+}
+
+TMethodDecl MethodDecl() :
+{
+  TType ty;
+  Token id1;
+  TFormalList fl;
+  TExp e;
+  TVarDeclList vdl = new TVarDeclList();
+  TStatementList sl = new TStatementList();
+}
+{
+  < PUBLIC > ty = Type() id1 = < ID > < LPAREN > fl = FormalList() < RPAREN > < LCHAVE >
+  {
+    VarDeclListMod(vdl, sl);
+  }
+  < RETURN > e = Exp() < PVIRGULA > < RCHAVE >
+  {
+    return new TMethodDecl(ty, new TIdentifier(id1.image), fl, vdl, sl, e);
+  }
+}
+
+void VarDeclListMod(TVarDeclList vdl, TStatementList sl) :
+{
+  Token id1;
+  Token id2;
+  TExp e2;
+  TExp e3;
+  TVarDecl vd;
+  TStatement s;
+}
+{
+  < INT >
+  (
+    < LCOLCHETE > < RCOLCHETE > id1 = < ID > < PVIRGULA >
+    {
+      vd = new TVarDecl(new TTypeIntegerArray(), new TIdentifier(id1.image));
+      vdl.addElement(vd);
+      VarDeclListMod(vdl, sl);
+    }
+  | id1 = < ID > < PVIRGULA >
+    {
+      vd = new TVarDecl(new TTypeInteger(), new TIdentifier(id1.image));
+      vdl.addElement(vd);
+      VarDeclListMod(vdl, sl);
+    }
+  )
+| < BOOLEAN > id1 = < ID > < PVIRGULA >
+  {
+    vd = new TVarDecl(new TTypeBoolean(), new TIdentifier(id1.image));
+    vdl.addElement(vd);
+    VarDeclListMod(vdl, sl);
+  }
+| id1 = < ID >
+  (
+    id2 = < ID > < PVIRGULA >
+    {
+      vd = new TVarDecl(new TTypeIdentifier(id1.image), new TIdentifier(id2.image));
+      vdl.addElement(vd);
+      VarDeclListMod(vdl, sl);
+    }
+  | < LCOLCHETE > e2 = Exp() < RCOLCHETE > < IGUAL > e3 = Exp() < PVIRGULA >
+    {
+      s = new TStatementArrayAssign(new TIdentifier(id1.image), e2, e3);
+    }
+    sl = StatementList()
+    {
+      sl.addElement(s);
+    }
+  | < IGUAL > e2 = Exp() < PVIRGULA >
+    {
+      s = new TStatementAssign(new TIdentifier(id1.image), e2);
+    }
+    sl = StatementList()
+    {
+      sl.addElement(s);
+    }
+  )
+|
+  {}
+  sl = StatementList()
+}
+
+TFormal Formal() :
+{
+  TType ty;
+  Token id1;
+}
+{
+  ty = Type() id1 = < ID >
+  {
+    return new TFormal(ty, new TIdentifier(id1.image));
+  }
+}
+
+TFormalList FormalList() :
+{
+  TFormal f;
+  TFormalList fl;
+}
+{
+  f = Formal() fl = FormalRest()
+  {
+    fl.addElement(f);
+    return fl;
+  }
+|
+  {}
+  {
+    return new TFormalList();
+  }
+}
+
+TFormalList FormalRest() :
+{
+  TFormal f;
+  TFormalList fl;
+}
+{
+  < VIRGULA > f = Formal() fl = FormalRest()
+  {
+    fl.addElement(f);
+    return fl;
+  }
+|
+  {}
+  {
+    return new TFormalList();
+  }
+}
+
+TStatementList StatementList() :
+{
+  TStatement s;
+  TStatementList sl;
+}
+{
+  s = Statement() sl = StatementList()
+  {
+    sl.addElement(s);
+    return sl;
+  }
+|
+  {}
+  {
+    return new TStatementList();
+  }
+}
+
+TStatement Statement() :
+{
+  int i = 0;
+  TStatementList sl;
+  TExp e1;
+  TExp e2;
+  TStatement s1;
+  TStatement s2;
+  Token id1;
+}
+{
+  < IF > < LPAREN > e1 = Exp() < RPAREN > s1 = Statement() < ELSE > s2 = Statement()
+  {
+    return new TStatementIf(e1, s1, s2);
+  }
+| < WHILE > < LPAREN > e1 = Exp() < RPAREN > s1 = Statement()
+  {
+    return new TStatementWhile(e1, s1);
+  }
+| < SOP > < LPAREN > e1 = Exp() < RPAREN > < PVIRGULA >
+  {
+    return new TStatementPrint(e1);
+  }
+| id1 = < ID >
+  (
+    < LCOLCHETE > e1 = Exp() < RCOLCHETE > < IGUAL > e2 = Exp() < PVIRGULA >
+    {
+      return new TStatementArrayAssign(new TIdentifier(id1.image), e1, e2);
+    }
+  | < IGUAL > e2 = Exp() < PVIRGULA >
+    {
+      return new TStatementAssign(new TIdentifier(id1.image), e2);
+    }
+  )
+| < LCHAVE > sl = StatementList() < RCHAVE >
+  {
+    return new TStatementBlock(sl);
+  }
+}
+
+TExpList ExpList() :
+{
+  TExp e;
+  TExpList el;
+}
+{
+  e = Exp() el = ExpRest()
+  {
+    el.addElement(e);
+    return el;
+  }
+|
+  {}
+  {
+    return new TExpList();
+  }
+}
+
+TExpList ExpRest() :
+{
+  TExp e;
+  TExpList el;
+}
+{
+  < VIRGULA > e = Exp() el = ExpRest()
+  {
+    el.addElement(e);
+    return el;
+  }
+|
+  {}
+  {
+    return new TExpList();
+  }
+}
+
+TExp Exp() :
+{
+  Token id1;
+  TExp e1;
+  TExp e2;
+}
+{
+  (
+    id1 = < NUM >
+    {
+      e1 = new TExpIntegerLiteral(Integer.parseInt(id1.image));
+    }
+  | < TRUE >
+    {
+      e1 = new TExpTrue();
+    }
+  | < FALSE >
+    {
+      e1 = new TExpFalse();
+    }
+  | id1 = < ID >
+    {
+      e1 = new TExpId(id1.image);
+    }
+  | < THIS >
+    {
+      e1 = new TExpThis();
+    }
+  | < NEW >
+    (
+      < INT > < LCOLCHETE > e2 = Exp() < RCOLCHETE >
+      {
+        e1 = new TExpNewArray(e2);
+      }
+    | id1 = < ID > < LPAREN > < RPAREN >
+      {
+        e1 = new TExpNewObject(new TIdentifier(id1.image));
+      }
+    )
+  | < EXCL > e2 = Exp()
+    {
+      e1 = new TExpNot(e2);
+    }
+  | < LPAREN > e1 = Exp() < RPAREN >
+  )
+  {
+    return ExpAux(e1);
+  }
+}
+
+TExp ExpAux(TExp e1) :
+{
+  Token id2;
+  TExp e2;
+  TExpList el;
+}
+{
+  (
+    < SUM > e2 = Exp()
+    {
+      return new TExpOpPlus(e1, e2);
+    }
+  | < SUB > e2 = Exp()
+    {
+      return new TExpOpMinus(e1, e2);
+    }
+  | < MULTI > e2 = Exp()
+    {
+      return new TExpOpTimes(e1, e2);
+    }
+  | < AND > e2 = Exp()
+    {
+      return new TExpOpAnd(e1, e2);
+    }
+  | < LESSTHAN > e2 = Exp()
+    {
+      return new TExpOpLessThan(e1, e2);
+    }
+  )
+| < LCOLCHETE > e2 = Exp() < RCOLCHETE >
+  {
+    return new TExpArrayLookup(e1, e2);
+  }
+| < PONTO >
+  (
+    < LENGTH >
+    {
+      return new TExpArrayLength(e1);
+    }
+  | id2 = < ID > < LPAREN > el = ExpList() < RPAREN >
+  )
+  {
+    return new TExpCall(e1, new TIdentifier(id2.image), el);
+  }
+|
+  {}
+  {
+    return e1;
+  }
+}
