@@ -7,3 +7,4 @@ public abstract class TClassDecl {
   public abstract TType accept(TypeVisitor v);
 //  public abstract translate.Exp accept(ExpVisitor v);
 }
+//jfaeui
