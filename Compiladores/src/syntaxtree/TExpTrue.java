@@ -1,5 +1,5 @@
 package syntaxtree;
-import translate.Exp;
+//import translate.Exp;
 import visitor.ExpVisitor;
 import visitor.TypeVisitor;
 import visitor.Visitor;
@@ -13,7 +13,7 @@ public class TExpTrue extends TExp {
     return v.visit(this);
   }
 
-@Override
+//@Override
 //public Exp accept(ExpVisitor v) {
 //	// TODO Auto-generated method stub
 //	return v.visit(this);
