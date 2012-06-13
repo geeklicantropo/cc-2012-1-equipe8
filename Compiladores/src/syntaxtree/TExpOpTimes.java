@@ -1,5 +1,5 @@
 package syntaxtree;
-//import translate.Exp;
+import translate.Exp;
 import visitor.ExpVisitor;
 import visitor.TypeVisitor;
 import visitor.Visitor;
