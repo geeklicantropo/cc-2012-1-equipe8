@@ -21,9 +21,9 @@ public class TExpCall extends TExp {
     return v.visit(this);
   }
 
-//@Override
-//public translate.Exp accept(ExpVisitor v) {
-//	// TODO Auto-generated method stub
-//	return null;
-//}
+@Override
+public translate.Exp accept(ExpVisitor v) {
+	// TODO Auto-generated method stub
+	return null;
+}
 }

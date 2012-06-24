@@ -22,7 +22,7 @@ public class TStatementIf extends TStatement {
 		return v.visit(this);
 	}
 
-//	public translate.Exp accept(ExpVisitor v) {
-//		return v.visit(this);
-//	}
+	public translate.Exp accept(ExpVisitor v) {
+		return v.visit(this);
+	}
 }

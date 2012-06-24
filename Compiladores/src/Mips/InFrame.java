@@ -1,0 +1,1 @@
+package Mips;public class InFrame extends Frame.Access{  int offset;  InFrame(int o)  {    offset = o;  }  public IRTree.Exp exp(IRTree.Exp fp)  {    return new IRTree.MEM(new IRTree.BINOP(IRTree.BINOP.PLUS, fp, new IRTree.CONST(offset)));  }  public String toString()  {    Integer offset = new Integer(this.offset);    return offset.toString();  }}

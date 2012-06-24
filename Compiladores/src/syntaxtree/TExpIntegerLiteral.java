@@ -19,9 +19,9 @@ public class TExpIntegerLiteral extends TExp {
     return v.visit(this);
   }
 
-//@Override
-//public translate.Exp accept(ExpVisitor v) {
-//	// TODO Auto-generated method stub
-//	return v.visit(this);
-//}
+@Override
+public translate.Exp accept(ExpVisitor v) {
+	// TODO Auto-generated method stub
+	return v.visit(this);
+}
 }

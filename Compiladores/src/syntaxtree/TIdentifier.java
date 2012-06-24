@@ -23,7 +23,7 @@ public class TIdentifier {
 		return s;
 	}
 
-//	public translate.Exp accept(ExpVisitor v) {
-//		return v.visit(this);
-//	}
+	public translate.Exp accept(ExpVisitor v) {
+		return v.visit(this);
+	}
 }

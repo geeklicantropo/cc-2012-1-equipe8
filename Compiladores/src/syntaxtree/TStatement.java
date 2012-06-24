@@ -6,5 +6,5 @@ import visitor.Visitor;
 public abstract class TStatement {
   public abstract void accept(Visitor v);
   public abstract TType accept(TypeVisitor v);
-//  public abstract translate.Exp accept(ExpVisitor v);
+  public abstract translate.Exp accept(ExpVisitor v);
 }
