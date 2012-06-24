@@ -19,9 +19,9 @@ public class TExpOpMinus extends TExp {
     return v.visit(this);
   }
 
-//@Override
-//public Exp accept(ExpVisitor v) {
-//	// TODO Auto-generated method stub
-//	return v.visit(this);
-//}
+@Override
+public Exp accept(ExpVisitor v) {
+	// TODO Auto-generated method stub
+	return v.visit(this);
+}
 }

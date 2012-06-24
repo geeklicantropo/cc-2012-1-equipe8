@@ -25,11 +25,11 @@ public void TStatement(Visitor v) {
 	
 }*/
 
-//@Override
-//public Exp accept(ExpVisitor v) {
-//	// TODO Auto-generated method stub
-//	return null;
-//}
+@Override
+public Exp accept(ExpVisitor v) {
+	// TODO Auto-generated method stub
+	return null;
+}
 
 
 }

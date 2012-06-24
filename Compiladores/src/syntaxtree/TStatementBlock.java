@@ -17,8 +17,8 @@ public class TStatementBlock extends TStatement {
   public TType accept(TypeVisitor v) {
     return v.visit(this);
   }
-//  public translate.Exp accept(ExpVisitor v) {
-//	    return v.visit(this);
-//	 }
+  public translate.Exp accept(ExpVisitor v) {
+	    return v.visit(this);
+	 }
 }
 
